@@ -1,0 +1,12 @@
+# * POST to create a new ambassador
+
+POST http://localhost:9000/api/ambassador/register
+content-type: application/json
+
+{
+    "first_name": "Eduardo",
+    "last_name": "Ayala",
+    "email": "eaac@hotmail.com",
+    "password": "asd123",
+    "password_confirm": "asd123"
+}

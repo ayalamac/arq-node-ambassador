@@ -2,7 +2,7 @@ import {Request, Response} from "express";
 import {getRepository} from "typeorm";
 import {User} from "../entity/user.entity";
 import bcryptjs from 'bcryptjs';
-import {sign, verify} from "jsonwebtoken";
+import {sign} from "jsonwebtoken";
 import {Order} from "../entity/order.entity";
 
 export const Register = async (req: Request, res: Response) => {
@@ -32,13 +32,13 @@ export const Login = async (req: Request, res: Response) => {
 
     if (!user) {
         return res.status(400).send({
-            message: 'invalid credentials!'
+            message: 'invalid credentials!1'
         });
     }
 
     if (!await bcryptjs.compare(req.body.password, user.password)) {
         return res.status(400).send({
-            message: 'invalid credentials!'
+            message: 'invalid credentials!2'
         });
     }
 

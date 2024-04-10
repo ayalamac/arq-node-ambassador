@@ -1,0 +1,9 @@
+# * POST to login ambassador
+
+POST http://localhost:9000/api/ambassador/login
+content-type: application/json
+
+{
+    "email": "sochoa@gmail.com",
+    "password": "asd123"
+}

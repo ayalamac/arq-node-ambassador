@@ -133,7 +133,7 @@ export const ConfirmOrder = async (req: Request, res: Response) => {
 
     await client.zIncrBy('rankings', order.ambassador_revenue, user.name);
     const transporter = createTransport({
-        host: 'host.docker.internal',
+        host: 'localhost',
         port: 1025
     });
 
