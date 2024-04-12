@@ -1,6 +1,6 @@
 # * POST to login admin
 
-POST http://localhost:9000/api/admin/login
+POST http://localhost:8300/api/admin/login
 content-type: application/json
 
 {

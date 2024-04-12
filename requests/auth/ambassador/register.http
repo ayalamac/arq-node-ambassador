@@ -1,6 +1,6 @@
 # * POST to create a new ambassador
 
-POST http://localhost:9000/api/ambassador/register
+POST http://localhost:8300/api/ambassador/register
 content-type: application/json
 
 {

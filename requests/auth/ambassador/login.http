@@ -1,6 +1,6 @@
 # * POST to login ambassador
 
-POST http://localhost:9000/api/ambassador/login
+POST http://localhost:8300/api/ambassador/login
 content-type: application/json
 
 {

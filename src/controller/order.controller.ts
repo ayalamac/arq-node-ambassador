@@ -112,6 +112,7 @@ export const CreateOrder = async (req: Request, res: Response) => {
 }
 
 export const ConfirmOrder = async (req: Request, res: Response) => {
+    
     const repository = getRepository(Order);
 
     const order = await repository.findOne({
@@ -134,6 +135,7 @@ export const ConfirmOrder = async (req: Request, res: Response) => {
     await client.zIncrBy('rankings', order.ambassador_revenue, user.name);
     const transporter = createTransport({
         host: 'localhost',
+        // host: 'host.docker.internal',
         port: 1025
     });
 
@@ -151,7 +153,7 @@ export const ConfirmOrder = async (req: Request, res: Response) => {
         html: `You earned $${order.ambassador_revenue} from the link #${order.code}`
     });
 
-    await transporter.close();
+    transporter.close();
 
     res.send({
         message: 'success'

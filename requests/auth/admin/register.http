@@ -1,6 +1,6 @@
 # * POST to create a new admin
 
-POST http://localhost:9000/api/admin/register
+POST http://localhost:8300/api/admin/register
 content-type: application/json
 
 {

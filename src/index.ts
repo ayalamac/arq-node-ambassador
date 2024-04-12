@@ -28,8 +28,8 @@ createConnection().then(async () => {
 
     routes(app);
 
-    app.listen(9000, () => {
-        console.log('listening to port 9000...')
+    app.listen(8300, () => {
+        console.log('listening to port 8300...')
     });
 });
 
