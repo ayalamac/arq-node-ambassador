@@ -16,11 +16,6 @@ export class User {
     })
     email: string;
 
-    @Column({
-        select: false
-    })
-    password: string;
-
     @Column()
     is_ambassador: boolean;
 

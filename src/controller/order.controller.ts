@@ -1,18 +1,18 @@
-import {Request, Response} from "express";
-import {getConnection, getRepository} from "typeorm";
-import {Order} from "../entity/order.entity";
-import {Link} from "../entity/link.entity";
-import {Product} from "../entity/product.entity";
-import {OrderItem} from "../entity/order-item.entity";
+import { Request, Response } from "express";
+import { getConnection, getRepository } from "typeorm";
+import { Order } from "../entity/order.entity";
+import { Link } from "../entity/link.entity";
+import { Product } from "../entity/product.entity";
+import { OrderItem } from "../entity/order-item.entity";
 import Stripe from "stripe";
-import {client} from "../index";
-import {User} from "../entity/user.entity";
-import {createTransport} from "nodemailer";
+import { client } from "../index";
+import { User } from "../entity/user.entity";
+import producer from "../kafka/config";
 
 
 export const Orders = async (req: Request, res: Response) => {
     const orders = await getRepository(Order).find({
-        where: {complete: true},
+        where: { complete: true },
         relations: ['order_items']
     });
 
@@ -30,7 +30,7 @@ export const CreateOrder = async (req: Request, res: Response) => {
     const body = req.body;
 
     const link = await getRepository(Link).findOne({
-        where: {code: body.code},
+        where: { code: body.code },
         relations: ['user']
     });
 
@@ -112,7 +112,7 @@ export const CreateOrder = async (req: Request, res: Response) => {
 }
 
 export const ConfirmOrder = async (req: Request, res: Response) => {
-    
+
     const repository = getRepository(Order);
 
     const order = await repository.findOne({
@@ -128,34 +128,47 @@ export const ConfirmOrder = async (req: Request, res: Response) => {
         });
     }
 
-    await repository.update(order.id, {complete: true});
+    await repository.update(order.id, { complete: true });
 
     const user = await getRepository(User).findOne(order.user_id);
 
     await client.zIncrBy('rankings', order.ambassador_revenue, user.name);
-    const transporter = createTransport({
-        host: 'localhost',
-        // host: 'host.docker.internal',
-        port: 1025
+    
+    const value = JSON.stringify(
+        {
+            ...order,
+            admin_revenue:order.total,
+            ambassador_revenue: order.ambassador_revenue
+        }
+    );
+    await producer.connect();
+    await producer.send({
+        topic: 'test_email_topic',
+        messages:[
+            {value}
+        ]
     });
-
-    await transporter.sendMail({
-        from: 'from@example.com',
-        to: 'admin@admin.com',
-        subject: 'An order has been completed',
-        html: `Order #${order.id} with a total of $${order.total} has been completed`
-    });
-
-    await transporter.sendMail({
-        from: 'from@example.com',
-        to: order.ambassador_email,
-        subject: 'An order has been completed',
-        html: `You earned $${order.ambassador_revenue} from the link #${order.code}`
-    });
-
-    transporter.close();
 
     res.send({
         message: 'success'
     });
+
+    
+}
+
+export const Rankings = async (req: Request, res: Response) => {
+    const result: string[] = await client.sendCommand(['ZREVRANGEBYSCORE', 'rankings', '+inf', '-inf', 'WITHSCORES']);
+    let name;
+
+    res.send(result.reduce((o, r) => {
+        if (isNaN(parseInt(r))) {
+            name = r;
+            return o;
+        } else {
+            return {
+                ...o,
+                [name]: parseInt(r)
+            };
+        }
+    }, {}));
 }

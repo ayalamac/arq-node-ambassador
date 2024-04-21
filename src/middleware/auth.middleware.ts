@@ -4,7 +4,8 @@ import {getRepository} from "typeorm";
 import {User} from "../entity/user.entity";
 
 export const AuthMiddleware = async (req: Request, res: Response, next: Function) => {
-    try {
+    next();
+    /*try {
         const jwt = req.cookies['jwt'];
 
         const payload: any = verify(jwt, process.env.SECRET_KEY);
@@ -32,5 +33,5 @@ export const AuthMiddleware = async (req: Request, res: Response, next: Function
         return res.status(401).send({
             message: 'unauthenticated'
         });
-    }
+    }*/
 }
