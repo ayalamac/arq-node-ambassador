@@ -19,6 +19,12 @@ export const UserMiddleware = async (req: Request, res: Response, next: Function
 
         const user = await getRepository(User).findOne({ email: payload.email });
 
+        if (!user) {
+            return res.status(401).send({
+                message: 'must complete user profile'
+            });
+        }
+
         req["user"] = user;
 
         next();
